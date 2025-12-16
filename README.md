@@ -1,4 +1,4 @@
-# Machine Learning FITS Image Denoising
+# Deep Learning Astronomy Image Denoising
 
 A self-supervised deep learning pipeline for denoising astronomical images in FITS format. This tool implements two denoising methods designed for situations where clean reference images are unavailable, a common challenge in astrophotography.
 
@@ -27,8 +27,8 @@ Both methods excel with astronomical data where traditional supervised learning 
 Want to test immediately? Sample calibrated and original data are already included in the `Plotting/` directory for your convenience.
 
 ```bash
-git clone https://github.com/marcosmarro/FITSdenoising_ML.git
-cd FITSdenoising_ML
+git clone https://github.com/marcosmarro/AstroImageDL.git
+cd AstroImageDL
 pip install -r requirements.txt
 python run_all.py
 ```
@@ -40,7 +40,7 @@ Your denoised results will appear in `DenoisedScience/` and evaluation plots in 
 ## Project Structure
 
 ```
-FITSdenoising_ML/
+AstroImageDL/
 ├── train.py               # Model training script
 ├── inference.py           # Denoise science images
 ├── evaluation.py          # Performance metrics and analysis
@@ -59,15 +59,16 @@ FITSdenoising_ML/
 
 ## Prerequisites
 
-- **Python**: 3.9 or higher (PyTorch Requirments)
+- **Python**: 3.9 or higher (PyTorch Requirements)
 - **GPU**: CUDA-compatible GPU recommended (CPU training possible but slower, ~10 minutes for M1 MacBook)
+- **Storage**: At least 2 GB of disk space
 
 ## Installation & Setup
 
 1. **Clone and Navigate**
    ```bash
-   git clone https://github.com/marcosmarro/FITSdenoising_ML.git
-   cd FITSdenoising_ML
+   git clone https://github.com/marcosmarro/AstroImageDL.git
+   cd AstroImageDL
    ```
 
 2. **Update Repository** (if previously cloned)
@@ -96,8 +97,8 @@ FITSdenoising_ML/
    ```
 
 6. **Check Results**
-    - Denoised images will be stored in `DenoisedScience/`  
-    - Evaluation metrics will be displayed in the terminal and/or saved as files.  
+    - Denoised FITS images will be stored in `DenoisedScience/`  
+    - Evaluation metric plots will be displayed in the `Plotting/`
 
 ---
 
@@ -110,8 +111,8 @@ python run_all.py
 Executes training → inference → evaluation in sequence.
 
 ### Individual Steps
-The argument "-d" specifies directory where files live
-The argument "-m" specifies model to use
+The argument "-d" specifies directory where files live.
+The argument "-m" specifies model to use. User must choose from `[n2v/n2n]`.
 ```bash
 # Train models only
 python train.py -d Training -m n2v/n2n
