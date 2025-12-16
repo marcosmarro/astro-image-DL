@@ -18,17 +18,16 @@ args = parser.parse_args()
 
 batchsize = 1
 
-
 if args.denoising_model == 'n2v':
-    model = torch.load('N2V.pth', weights_only=False)
+    model = torch.load('n2v.pth', weights_only=False)
     model.eval()
 
 if args.denoising_model == 'n2n':
-    model = torch.load('N2N.pth', weights_only=False)
+    model = torch.load('n2n.pth', weights_only=False)
     model.eval()
 
 directory = Path(args.data_directory)
-file_list = sorted(directory.glob('calibrated*.fits'))
+file_list = sorted(directory.glob('*.fits'))
 
 
 for i, file in tqdm(enumerate(file_list)):
@@ -41,15 +40,15 @@ for i, file in tqdm(enumerate(file_list)):
     train_loader = train_loader.unsqueeze(0).unsqueeze(0)
 
     with torch.inference_mode():
-        input_sequence  = train_loader
-        output_sequence = model(input_sequence)
+        output_sequence = model(train_loader)
     
     denoised = output_sequence.squeeze().cpu().numpy()
     
     # Writing the data into the file where it's saved in directory named DenoisedScience
     science_hdu = fits.PrimaryHDU(data=denoised, header=science[0].header)
     hdu_list    = fits.HDUList([science_hdu])
-    hdu_list.writeto(f'DenoisedScience/{args.denoising_model}_{file.stem}.fits', overwrite=True)
+
+    hdu_list.writeto(f'Denoised_Science/{args.denoising_model}_{file.stem}.fits', overwrite=True)
 
     print(f'Denoised {file}')
     del file, train_loader

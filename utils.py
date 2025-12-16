@@ -144,7 +144,7 @@ def plot_comparisons(models: list):
     ax_fwhm.grid(True)
 
     for model in models:
-        file = h5py.File(f'Plotting/{model}_data.h5', 'r')
+        file = h5py.File(f'Results/{model}_data.h5', 'r')
 
         model_snr  = file['snr'][:]
         model_cnr  = file['cnr'][:]
@@ -164,15 +164,15 @@ def plot_comparisons(models: list):
 
     # Add legends and save after all models are plotted
     ax_snr.legend()
-    fig_snr.savefig("Plotting/SNR.pdf", dpi=300)
+    fig_snr.savefig("Results/SNR.pdf", dpi=300)
     plt.close(fig_snr)
 
     ax_cnr.legend()
-    fig_cnr.savefig("Plotting/CNR.pdf", dpi=300)
+    fig_cnr.savefig("Results/CNR.pdf", dpi=300)
     plt.close(fig_cnr)
 
     ax_fwhm.legend()
-    fig_fwhm.savefig("Plotting/FWHM.pdf", dpi=300)
+    fig_fwhm.savefig("Results/FWHM.pdf", dpi=300)
     plt.close(fig_fwhm)
 
 
@@ -187,7 +187,7 @@ def plot_cross_correlation(models: list):
     axes = axes.ravel()
 
     for i, model in enumerate(models):  # loop over 4 plots
-        file = h5py.File(f'Plotting/{model}_data.h5', 'r')
+        file = h5py.File(f'Results/{model}_data.h5', 'r')
 
         cross_corr = file['cross_correlation'][:]
         
@@ -204,7 +204,7 @@ def plot_cross_correlation(models: list):
         fig.colorbar(im, ax=axes[i], fraction=0.046, pad=0.04)
 
     plt.tight_layout()
-    plt.savefig('Plotting/cross_correlation.pdf', dpi=300)
+    plt.savefig('Results/cross_correlation.pdf', dpi=300)
     plt.close()
 
 

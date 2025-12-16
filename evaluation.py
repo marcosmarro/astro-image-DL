@@ -61,7 +61,8 @@ array2 = fits.getdata(file_list[1]).astype(float)
 
 cross_corr = fftconvolve(array1, array2[::-1, ::-1], mode='full')
 
-with h5py.File(f'Plotting/{args.denoising_model}_data.h5', 'w') as f:
+# Overwrite existing h5 file if it exists
+with h5py.File(f'Results/{args.denoising_model}_data.h5', 'w') as f:
     f.create_dataset('snr', data=np.array(snr_values))
     f.create_dataset('cnr', data=np.array(cnr_values))
     f.create_dataset('fwhm', data=np.array(fwhm_values))

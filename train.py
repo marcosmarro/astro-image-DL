@@ -22,14 +22,14 @@ num_steps = 50 // batchsize
 # Selecting model
 if args.denoising_model == 'n2v':   # Noise2Void
     model      = UNetN2V(in_ch=1, depth=3).to(DEVICE)
-    criterion  = nn.SmoothL1Loss(reduction='none')
-    model_name = 'N2V.pth'
+    criterion  = nn.MSELoss(reduction='none')
+    model_name = 'n2v.pth'
     optimizer  = torch.optim.Adam(model.parameters(), lr=0.0004)
 
 if args.denoising_model == 'n2n':   # Noise2Noise
     model      = UNetN2N(in_ch=1, depth=5).to(DEVICE)
-    criterion  = nn.SmoothL1Loss()
-    model_name = 'N2N.pth'
+    criterion  = nn.MSELoss()
+    model_name = 'n2n.pth'
     optimizer  = torch.optim.Adam(model.parameters(), lr=0.0001)
 
 

@@ -1,14 +1,8 @@
 *.pth
 __pycache__
 *.pdf
-*.npy
 .DS_Store
 
-DenoisedScience/n2v*
-DenoisedScience/n2n*
-!DenoisedScience
-
-Plotting/n2n_data.h5
-Plotting/n2v_data.h5
+Denoised_Science/
 
 venv/
