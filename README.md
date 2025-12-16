@@ -27,13 +27,13 @@ Both methods excel with astronomical data where traditional supervised learning 
 Want to test immediately? Sample calibrated and original data are already included in the `Plotting/` directory for your convenience.
 
 ```bash
-git clone https://github.com/marcosmarro/AstroImageDL.git
-cd AstroImageDL
+git clone https://github.com/marcosmarro/astro-image-DL.git
+cd astro-image-DL
 pip install -r requirements.txt
 python run_all.py
 ```
 
-Your denoised results will appear in `DenoisedScience/` and evaluation plots in `Plotting/`.
+Your denoised results will appear in `Denoised_Science/` with a full depth-analysis notebook.
 
 ---
 
@@ -43,7 +43,7 @@ Your denoised results will appear in `DenoisedScience/` and evaluation plots in 
 AstroImageDL/
 ├── train.py               # Model training script
 ├── inference.py           # Denoise science images
-├── evaluation.py          # Performance metrics and analysis
+├── analysis.ipynb         # Performance metrics and analysis
 ├── utils.py               # Custom helper functions
 ├── network.py             # PyTorch neural network architectures
 ├── run_all.py             # Complete pipeline automation
@@ -51,7 +51,6 @@ AstroImageDL/
 ├── Training/              # Place your training FITS files here
 ├── Science/               # Raw science images to be denoised
 ├── DenoisedScience/       # Output directory for denoised images
-├── Plotting/              # Evaluation plots + sample calibrated/original data
 └── README.md
 ```
 
@@ -67,8 +66,8 @@ AstroImageDL/
 
 1. **Clone and Navigate**
    ```bash
-   git clone https://github.com/marcosmarro/AstroImageDL.git
-   cd AstroImageDL
+   git clone https://github.com/marcosmarro/astro-image-DL.git
+   cd astro-image-DL
    ```
 
 2. **Update Repository** (if previously cloned)
@@ -97,8 +96,8 @@ AstroImageDL/
    ```
 
 6. **Check Results**
-    - Denoised FITS images will be stored in `DenoisedScience/`  
-    - Evaluation metric plots will be displayed in the `Plotting/`
+    - Denoised FITS images will be stored in `Denoised_Science/`  
+    - Evaluate using analysis.ipynb or create your own notebook!
 
 ---
 
