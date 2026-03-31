@@ -24,16 +24,16 @@ Both methods excel with astronomical data where traditional supervised learning 
 
 ## Quick Start
 
-Want to test immediately? Sample calibrated and original data are already included in the `Plotting/` directory for your convenience.
+Want to test immediately? Sample calibrated and original data are already included in the `denoise_sample.pdf` file for your convenience.
 
 ```bash
 git clone https://github.com/marcosmarro/astro-image-DL.git
 cd astro-image-DL
 pip install -r requirements.txt
-python run_all.py
+python n2n.py --data path/to/file.npy
 ```
 
-Your denoised results will appear in `Denoised_Science/` with a full depth-analysis notebook.
+Your denoised results will appear as `path/to/file_N2N.npy`.
 
 ---
 
@@ -41,16 +41,15 @@ Your denoised results will appear in `Denoised_Science/` with a full depth-analy
 
 ```
 AstroImageDL/
-├── train.py               # Model training script
-├── inference.py           # Denoise science images
-├── analysis.ipynb         # Performance metrics and analysis
-├── utils.py               # Custom helper functions
-├── network.py             # PyTorch neural network architectures
-├── run_all.py             # Complete pipeline automation
-├── requirements.txt       # Python dependencies
-├── Training/              # Place your training FITS files here
-├── Science/               # Raw science images to be denoised
-├── DenoisedScience/       # Output directory for denoised images
+├── Data/                   # All FITS files here
+├── Models/                 # Pretrained N2N and N2V models
+├── 1_RegisterFrames.ipynb  # Performance metrics and analysis
+├── 2_Analysis.ipynb        # Performance metrics and analysis
+├── n2n.py                  # Noise2Noise Model training script
+├── n2v.py                  # Noise2Void Model training script
+├── utils.py                # Custom helper functions
+├── network.py              # PyTorch neural network architectures
+├── requirements.txt        # Python dependencies
 └── README.md
 ```
 
@@ -60,7 +59,6 @@ AstroImageDL/
 
 - **Python**: 3.9 or higher (PyTorch Requirements)
 - **GPU**: CUDA-compatible GPU recommended (CPU training possible but slower, ~10 minutes for M1 MacBook)
-- **Storage**: At least 2 GB of disk space
 
 ## Installation & Setup
 
@@ -90,9 +88,9 @@ AstroImageDL/
    pip install -r requirements.txt
    ```
 
-5. **Run Complete Pipeline**
+5. **Denoise Dataset**
    ```bash
-   python run_all.py
+   python n2n.py --data 'path/to/file.npy'
    ```
 
 6. **Check Results**
@@ -110,17 +108,17 @@ python run_all.py
 Executes training → inference → evaluation in sequence.
 
 ### Individual Steps
-The argument "-d" specifies directory where files live.
-The argument "-m" specifies model to use. User must choose from `[n2v/n2n]`.
+The argument "-data" specifies directory where files live.
 ```bash
-# Train models only
-python train.py -d Training -m n2v/n2n
+# Train N2V model and denoise with early stopping
+python n2v.py --data path/to/file.npy 
+```
 
-# Denoise existing science images
-python inference.py -d Science -m n2v/n2n
+or
 
-# Generate evaluation metrics and plots
-python evaluation.py -d Denoised Science -m n2v/n2n
+```bash
+# Train N2N model and denoise with early stopping
+python n2n.py --data path/to/file.npy 
 ```
 
 ### Monitor Training Progress
@@ -146,12 +144,6 @@ During training, denoised samples are automatically saved as `denoised_sample.pd
 **CUDA Not Available**
 - Install PyTorch with CUDA support
 - Verify GPU drivers are current
-
----
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit pull requests, report bugs, or suggest improvements. For major changes, please open an issue first to discuss proposed modifications.
 
 ---
 

@@ -5,52 +5,6 @@ import matplotlib.pyplot as plt
 from astropy.modeling import fitting
 from astropy.modeling.models import Gaussian2D
 from photutils.aperture import CircularAnnulus, CircularAperture, aperture_photometry
-torch.manual_seed(32)
-
-def random_crop(data: np.ndarray, position: list, batchsize: int, patch_size: int) -> np.ndarray:
-    """Crop a random patch from [B, C, H, W] image.
-    
-    Args:
-        data: 4D array of data with shape [B, C, H, W].
-        position: list of tuples that indicate where the lower left of crop will begin (x, y).
-        batchsize: number of patches to crop from image.
-        patch_size: size of patch, in pixels, to be cropped from image H & W.
-        
-    Returns:
-        patches: 4D array of cropped patch(es) with shape [B, C, patch_size, patch_size].
-    """
-    patches = []
- 
-    for i in range(batchsize):
-        x = position[i][0]
-        y = position[i][1]
-        patches.append(data[:, :, x:x+patch_size, y:y+patch_size])
-
-    patches = torch.cat(patches)
-
-    return patches
-
-
-def apply_n2v_mask(data: np.ndarray, mask_fraction: int = 0.01) -> tuple[np.ndarray, np.ndarray]:
-    """Randomly mask a fraction of pixels in data.
-
-    Args:
-        data: 4D array of data with shape [B, C, H, W].
-        mask_fraction: fraction of pixels to be masked out in the patch.
-            - default = 0.01
-
-    Returns:
-        A tuple[x_masked, mask] containing:
-            data_masked: 4D masked array with shape [B, C, H, W].
-            mask: masked array.
-    """
-    B, C, H, W  = data.shape
-    data_masked = data.clone()
-    mask        = torch.rand(B, 1, H, W) < mask_fraction
-
-    data_masked[mask] = 0.0        # Replace masked pixels with 0
-
-    return data_masked, mask
 
 
 def do_aperture_photometry(
@@ -59,19 +13,25 @@ def do_aperture_photometry(
     radius: int,
     sky_radius_in: int,
     sky_annulus_width: int,
-    RON: int = 17.26,
+    RON: float = 17.26,
 ) -> tuple:
     """Performs aperture photometry and returns a tuple of values needed to calculate SNR/CNR.
 
-    Args:
-        data: 2D data of reduced science image.
-        position: a tuple of position location with integers (x, y).
-        radius: aperture radius in pixels.
-        sky_radius_in: pixel radius at which to measure the sky background.
-        sky_annulus_width: pixel width of the annulus.
-        RON: Read-out noise that was calculated prior to denoising.
+    Parameters
+    ----------
+    data:          array
+                   2D data of reduced science image.
+    position:      tuple
+                   tuple of position location with integers (x, y).
+    radius:        int
+                   aperture radius in pixels.
+    sky_radius: int
+                   pixel radius at which to measure the sky background.
+    sky_annulus_width: pixel width of the annulus.
+    RON: Read-out noise that was calculated prior to denoising.
 
-    Returns:
+    Returns
+    -------
         A tuple[SNR, CNR] containing:
             SNR: signal-to-noise ratio.
             CNR: contrast-to-noise ratio.
