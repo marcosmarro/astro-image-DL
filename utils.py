@@ -48,7 +48,7 @@ def do_aperture_photometry(
 
     # Grabs the background's mean in the annulus and multiplies it by aperture's area to grab background in only annulus
     mean_noise = (raw_background / annulus.area).item()
-    noise      = data[x - 10: x + 10, y - 100: y - 50].flatten()
+    noise      = data[y - 10: y + 10, x - 100: x - 50].flatten().flatten()
     noise_std  = np.std(noise)
 
     # Background count in the aperture
@@ -59,7 +59,7 @@ def do_aperture_photometry(
 
     # Calculates CNR and SNR
     cnr = (signal - mean_noise) / noise_std
-    snr = signal / np.sqrt(signal + aperture.area * RON ** 2)
+    snr = signal / np.sqrt(signal + aperture.area * (mean_noise + RON ** 2))
 
     ### Calculating FWHM
     sub    = data[y-radius:y+radius+1, x-radius:x+radius+1]

@@ -19,10 +19,11 @@ def main(args):
     batch_size = args.batch_size
     num_epochs = args.num_epochs
 
+    dpth = 4
     # Selecting model
-    model      = UNetN2N(in_ch=1, depth=5).to(DEVICE)
+    model      = UNetN2N(in_ch=1, depth=dpth).to(DEVICE)
     criterion  = nn.MSELoss()
-    model_name = 'n2n.pth'
+    model_name = f'n2n_{dpth}.pth'
     optimizer  = torch.optim.Adam(model.parameters(), lr=args.lr)
     scheduler  = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=np.arange(int(num_epochs/5), num_epochs, step=int(num_epochs/5)), gamma=0.5)
 
@@ -35,14 +36,18 @@ def main(args):
 
     # Grabbing files
     all_files   = LPSEB_Dataset_N2N(args.data)
-    train, test = LPSEB_Dataset_N2N(args.data, type='train'), LPSEB_Dataset_N2N(args.data, type='test')
-    
-    train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
-    test_loader  = DataLoader(test, batch_size=1, shuffle=False)
+
+    train_dataset = LPSEB_Dataset_N2N(args.data, type='train')
+    val_dataset   = LPSEB_Dataset_N2N(args.data, type='val')
+
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    test_loader  = DataLoader(val_dataset, batch_size=1, shuffle=False)
     all_loader   = DataLoader(all_files, batch_size=1, shuffle=False)
 
     for epoch in range(1, num_epochs + 1):
 
+        # Training
+        model.train()
         train_count, train_loss = 0, 0.0
 
         for batch in tqdm(train_loader, leave=False):
@@ -59,7 +64,7 @@ def main(args):
 
             output_seq = model(frame1)
 
-            loss = criterion(output_seq, frame2)               # only care about loss of masked values
+            loss = criterion(output_seq, frame2)
 
             train_count += 1
             train_loss  += loss.item()
@@ -70,8 +75,9 @@ def main(args):
 
         plot_sample(frame1, output_seq)
 
-        test_count, test_loss = 0, 0.0
-
+        # Validation
+        val_count, val_loss = 0, 0.0
+        model.eval()
         with torch.inference_mode():
             for batch in tqdm(test_loader, leave=False):
                 batch = batch.to(DEVICE)
@@ -81,13 +87,17 @@ def main(args):
 
                 output_seq = model(frame1)
 
-                test_count += 1
-                test_loss  += ((output_seq - frame2) ** 2).mean().item()
+                val_count += 1
+                val_loss  += ((output_seq - frame2) ** 2).mean().item()
 
-        print(f"Epoch: {epoch} | Train Loss: {train_loss / train_count:.4f} | Test Loss: {test_loss / test_count:.4f} | LR: {scheduler.get_last_lr()[0]:.3e}")
+        avg_train = train_loss / train_count
+        avg_val   = val_loss   / val_count
 
-        if test_loss / test_count < best_loss:
-            best_loss  = test_loss / test_count
+        print(f"Epoch: {epoch:3d} | Train Loss: {avg_train:.4f} | Val Loss: {avg_val:.4f} | LR: {scheduler.get_last_lr()[0]:.3e}")
+
+        # Early stopping
+        if avg_val < best_loss:
+            best_loss  = avg_val
             best_model = model.state_dict()
             best_epoch = epoch
             counter    = 0
@@ -95,7 +105,7 @@ def main(args):
             counter += 1
 
         if counter >= patience:
-            print("Early stopping triggered")
+            print(f"Early stopping triggered at epoch {epoch}")
             break
 
         scheduler.step()
@@ -104,7 +114,10 @@ def main(args):
     model.load_state_dict(best_model)
 
     if args.save_model:
-        torch.save(model, model_name)
+        torch.save(model.state_dict(), model_name)
+        print(f"Model saved as {model_name}")
+
+    model.eval()
 
     denoised = np.zeros((len(all_files), H, W))
 
@@ -123,7 +136,7 @@ def main(args):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Train a UNet for denoising astronomical images using Noise2Void or Noise2Noise.")
+    parser = argparse.ArgumentParser(description="Train a UNet for denoising astronomical images using Noise2Noise.")
     parser.add_argument('--data',       type=str,   default=None, help='Path to the file containing registered astronomy files for training.')
     parser.add_argument('--batch_size', type=int,   default=2,    help='Batch size for training.')
     parser.add_argument('--patch_size', type=int,   default=128,  help='Patch size for training.')

@@ -14,7 +14,7 @@ class LPSEB_Dataset(Dataset):
         self.data = np.load(data_path).astype(np.float32)
         self.type = type
         if self.type == 'train':
-            self.data = self.data[:int(0.8 * len(self.data))]  # Use first 80% of frames for training
+            self.data = self.data[:int(0.9 * len(self.data))]  # Use first 90% of frames for training
 
     def __len__(self):
         return len(self.data)
@@ -32,9 +32,9 @@ class LPSEB_Dataset_N2N(Dataset):
         self.data = np.load(data_path).astype(np.float32)  # (N, H, W)
         self.type = type
         if self.type == 'train':
-            self.data = self.data[:int(0.9 * len(self.data))]  # Use first 80% of frames for training
-        if self.type == 'test':
-            self.data = self.data[int(0.9 * len(self.data)):]  # Use last 20% of frames for testing
+            self.data = self.data[:int(0.9 * len(self.data))]  # Use first 90% of frames for training
+        if self.type == 'val':
+            self.data = self.data[int(0.9 * len(self.data)):]  # Use last 10% of frames for validation
 
     def __len__(self):
         return len(self.data)
