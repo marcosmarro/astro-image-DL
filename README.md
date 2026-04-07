@@ -41,10 +41,12 @@ Your denoised results will appear as `path/to/file_N2N.npy`.
 
 ```
 AstroImageDL/
-├── Data/                   # All FITS files here
 ├── Models/                 # Pretrained N2N and N2V models
-├── 1_RegisterFrames.ipynb  # Performance metrics and analysis
+├── calibration/            # Calibration script
+├── 1_ProcessFrames.ipynb   # Performance metrics and analysis
 ├── 2_Analysis.ipynb        # Performance metrics and analysis
+├── data.py                 # Data loader
+├── LPSEB_registered.npy    # Calibrated frames with shape (100, 800, 800)
 ├── n2n.py                  # Noise2Noise Model training script
 ├── n2v.py                  # Noise2Void Model training script
 ├── utils.py                # Custom helper functions
@@ -94,8 +96,8 @@ AstroImageDL/
    ```
 
 6. **Check Results**
-    - Denoised FITS images will be stored in `Denoised_Science/`  
-    - Evaluate using analysis.ipynb or create your own notebook!
+    - Denoised FITS images will be stored as `path/to/file_N2N.npy`  
+    - Evaluate using 2_Analysis.ipynb or create your own notebook!
 
 ---
 

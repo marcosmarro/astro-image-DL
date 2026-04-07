@@ -1,6 +1,8 @@
 *.npy
+!LPSEB_registered.npy
 __pycache__
 *.pdf
 .DS_Store
 venv/
 Data/
+CalibratedFrames/
